@@ -1,7 +1,10 @@
 #!/bin/bash
 
+# Define the directory where the hosts file should be created
+ANSIBLE_DIR="../ansible"
+
 # File to generate
-HOSTS_FILE="hosts.ini"
+HOSTS_FILE="$ANSIBLE_DIR/hosts.ini"
 
 # Start the hosts file
 echo "[tdengine_cluster]" > $HOSTS_FILE
