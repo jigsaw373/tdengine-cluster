@@ -1,0 +1,31 @@
+version: "3"
+services:
+  td-1:
+    image: tdengine/tdengine:$VERSION
+    environment:
+      TAOS_FQDN: "td-1"
+      TAOS_FIRST_EP: "td-1"
+    ports:
+      - 6041:6041
+      - 6030:6030
+    volumes:
+      # /var/lib/taos: TDengine's default data file directory. The location can be changed via [configuration file]. you can modify ~/data/taos/dnode1/data to your own data directory
+      - ~/data/taos/dnode1/data:/var/lib/taos
+      # /var/log/taos: TDengine's default log file directory. The location can be changed via [configure file]. you can modify ~/data/taos/dnode1/log to your own log directory
+      - ~/data/taos/dnode1/log:/var/log/taos
+  td-2:
+    image: tdengine/tdengine:$VERSION
+    environment:
+      TAOS_FQDN: "td-2"
+      TAOS_FIRST_EP: "td-1"
+    volumes:
+      - ~/data/taos/dnode2/data:/var/lib/taos
+      - ~/data/taos/dnode2/log:/var/log/taos
+  td-3:
+    image: tdengine/tdengine:$VERSION
+    environment:
+      TAOS_FQDN: "td-3"
+      TAOS_FIRST_EP: "td-1"
+    volumes:
+      - ~/data/taos/dnode3/data:/var/lib/taos
+      - ~/data/taos/dnode3/log:/var/log/taos
