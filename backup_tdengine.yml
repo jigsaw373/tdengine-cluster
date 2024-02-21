@@ -1,0 +1,45 @@
+---
+- name: TDengine Backup Playbook
+  hosts: tdengine_cluster
+  become: true
+  vars:
+    backup_node: node1  # Designate one node for backup
+    backup_path: /var/backups/tdengine
+    taosdump_path: /usr/bin  # Specify if taosdump is not in the PATH
+    taostools_deb_url: "https://www.taosdata.com/assets-download/3.0/taosTools-2.5.2-Linux-x64-comp3.deb"
+    taostools_deb_path: "/tmp/taosTools-2.5.2-Linux-x64-comp3.deb"
+
+  tasks:
+    - name: Download taosTools .deb package
+      ansible.builtin.get_url:
+        url: "{{ taostools_deb_url }}"
+        dest: "{{ taostools_deb_path }}"
+        mode: '0644'
+      when: inventory_hostname == backup_node or backup_node == 'all'
+
+    - name: Install taosTools from .deb package
+      ansible.builtin.shell: "dpkg -i --force-overwrite {{ taostools_deb_path }}"
+      become: true
+      when: inventory_hostname == backup_node or backup_node == 'all'
+      
+    - name: Generate timestamp for backup directory
+      ansible.builtin.set_fact:
+        current_time: "{{ lookup('pipe', 'date +%Y%m%d-%H%M%S') }}"
+      delegate_to: "{{ backup_node }}"
+      run_once: true
+
+    - name: Create timestamped backup directory
+      ansible.builtin.file:
+        path: "{{ backup_path }}/{{ current_time }}"
+        state: directory
+        mode: '0755'
+      delegate_to: "{{ backup_node }}"
+      run_once: true
+
+    - name: Backup TDengine data using taosdump with timestamped directory
+      ansible.builtin.command: "{{ taosdump_path }}/taosdump --all-databases -o {{ backup_path }}/{{ current_time }}"
+      delegate_to: "{{ backup_node }}"
+      run_once: true
+
+
+      
