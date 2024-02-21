@@ -47,7 +47,7 @@ node2 ansible_host=<Public_IP_of_Node2> ansible_user=ubuntu
 ...
 ```
 
-### Step 3: Run the TDengine Installation Playbook
+### Step 2: Run the TDengine Installation Playbook
 
 Navigate to ansible directory:
 
@@ -61,7 +61,7 @@ Run the installation playbook:
 ansible-playbook -i hosts.ini install_tdengine.yaml
 ```
 
-### Step 4: Create Database Manually
+### Step 3: Create Database Manually
 
 Log into any of the TDengine nodes and create the database:
 
@@ -70,7 +70,7 @@ taos -h <node1_IP>
 create database mydb;
 ```
 
-### Step 5: Implement Backup Policy
+### Step 4: Implement Backup Policy
 
 Run the backup playbook to configure the backup policy:
 
