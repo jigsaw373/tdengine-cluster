@@ -20,6 +20,11 @@ The project is structured as follows:
 
 ### Step 1: Provision Infrastructure with Terraform
 
+Navigate to terraform directory:
+
+``` bash
+cd terraform
+```
 
 Initialize Terraform:
 
@@ -43,6 +48,12 @@ node2 ansible_host=<Public_IP_of_Node2> ansible_user=ubuntu
 ```
 
 ### Step 3: Run the TDengine Installation Playbook
+
+Navigate to ansible directory:
+
+``` bash
+cd ../ansible
+```
 
 Run the installation playbook:
 
