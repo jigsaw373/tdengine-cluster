@@ -19,4 +19,4 @@ done
 
 # Append the vars section
 echo -e "\n[tdengine_cluster:vars]" >> $HOSTS_FILE
-echo "tdengine.pem" >> $HOSTS_FILE
+echo "ansible_ssh_private_key_file=tdengine.pem" >> $HOSTS_FILE
