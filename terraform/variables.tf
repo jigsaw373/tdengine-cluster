@@ -20,3 +20,8 @@ variable ami {
     type = string 
     default = "replace with image"
 }
+
+variable bucket_name { 
+    type = string 
+    default = "tdengine_backup"
+}
