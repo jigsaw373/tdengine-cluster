@@ -3,6 +3,11 @@ variable region {
     default = "ca-central-1"
 }
 
+variable profile { 
+    type = string 
+    default = "demo"
+}
+
 variable workers {
     type = list(object({
         type = string
