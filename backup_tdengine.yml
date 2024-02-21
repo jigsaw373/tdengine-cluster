@@ -8,6 +8,8 @@
     taosdump_path: /usr/bin  # Specify if taosdump is not in the PATH
     taostools_deb_url: "https://www.taosdata.com/assets-download/3.0/taosTools-2.5.2-Linux-x64-comp3.deb"
     taostools_deb_path: "/tmp/taosTools-2.5.2-Linux-x64-comp3.deb"
+    s3_bucket: "tdengine-backup"  # Specify your S3 bucket name
+    aws_region: "ca-central-1"  # Specify your AWS region
 
   tasks:
     - name: Download taosTools .deb package
@@ -40,6 +42,38 @@
       ansible.builtin.command: "{{ taosdump_path }}/taosdump --all-databases -o {{ backup_path }}/{{ current_time }}"
       delegate_to: "{{ backup_node }}"
       run_once: true
+
+    - name: Install Python3 and pip3
+      ansible.builtin.apt:
+        name:
+          - python3
+          - python3-pip
+        state: present
+        update_cache: yes
+      become: true
+      when: inventory_hostname == backup_node or backup_node == 'all'
+
+
+    - name: Ensure boto3 and botocore are installed
+      ansible.builtin.pip:
+        name:
+          - boto3
+          - botocore
+        state: present
+      delegate_to: "{{ backup_node }}"
+      run_once: true
+      
+    - name: Upload backup to S3
+      amazon.aws.aws_s3:
+        bucket: "{{ s3_bucket }}"
+        object: "/backups/tdengine/{{ current_time }}/"
+        src: "{{ backup_path }}/{{ current_time }}/"
+        mode: put
+        region: "{{ aws_region }}"
+        overwrite: different  # Overwrite the object in S3 if the local file is different
+      delegate_to: "{{ backup_node }}"
+      run_once: true
+      when: inventory_hostname == backup_node
 
 
       
