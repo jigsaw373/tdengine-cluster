@@ -18,6 +18,10 @@
         dest: "{{ taostools_deb_path }}"
         mode: '0644'
       when: inventory_hostname == backup_node or backup_node == 'all'
+      retries: 3
+      delay: 10
+      until: result is succeeded
+      register: result
 
     - name: Install taosTools from .deb package
       ansible.builtin.shell: "dpkg -i --force-overwrite {{ taostools_deb_path }}"
@@ -53,7 +57,6 @@
       become: true
       when: inventory_hostname == backup_node or backup_node == 'all'
 
-
     - name: Ensure boto3 and botocore are installed
       ansible.builtin.pip:
         name:
@@ -62,15 +65,25 @@
         state: present
       delegate_to: "{{ backup_node }}"
       run_once: true
-      
-    - name: Upload backup to S3
+
+    - name: Find backup files
+      ansible.builtin.find:
+        paths: "{{ backup_path }}/{{ current_time }}"
+        patterns: '*'
+        file_type: file
+      register: backup_files
+      delegate_to: "{{ backup_node }}"
+      run_once: true  
+
+    - name: Upload each backup file to S3
       amazon.aws.aws_s3:
         bucket: "{{ s3_bucket }}"
-        object: "/backups/tdengine/{{ current_time }}/"
-        src: "{{ backup_path }}/{{ current_time }}/"
+        object: "backups/tdengine/{{ current_time }}/{{ item.path | basename }}"
+        src: "{{ item.path }}"
         mode: put
         region: "{{ aws_region }}"
-        overwrite: different  # Overwrite the object in S3 if the local file is different
+        overwrite: different
+      loop: "{{ backup_files.files }}"
       delegate_to: "{{ backup_node }}"
       run_once: true
       when: inventory_hostname == backup_node
