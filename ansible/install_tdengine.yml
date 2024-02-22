@@ -36,17 +36,31 @@
           Enter your email address for priority support or enter empty to skip: ""
       become: yes
 
+    - name: Get the public IP address of the first node
+      shell: hostname -I | awk '{print $1}'
+      register: public_ip
+      when: inventory_hostname == groups['tdengine_cluster'][0]
+      delegate_to: "{{ groups['tdengine_cluster'][0] }}"
 
     - name: Configure TDengine cluster
       blockinfile:
         path: /etc/taos/taos.cfg
         block: |
-          firstEp {{ hostvars[groups['tdengine_cluster'][0]]['ansible_host'] }}:6030
-          {% if inventory_hostname != groups['tdengine_cluster'][0] %}
+          # The FQDN of the host on which this dnode will be started. It can be IP address
+          fqdn                    {{ public_ip.stdout | default(ansible_host) }}
+
+          # The port for external access after this dnode is started
+          serverPort                6030
+
+          {% if inventory_hostname == groups['tdengine_cluster'][0] %}
+          firstEp {{ public_ip.stdout }}:6030
+          {% else %}
+          firstEp {{ hostvars[groups['tdengine_cluster'][0]].ansible_host }}:6030
           secondEp {{ ansible_host }}:6030
           {% endif %}
         marker: "# {mark} ANSIBLE MANAGED BLOCK"
       when: inventory_hostname in groups['tdengine_cluster']
+
 
     - name: Start and enable TDengine Service
       systemd:
