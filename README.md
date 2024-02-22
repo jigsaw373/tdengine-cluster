@@ -86,3 +86,5 @@ Modify `setup_cron.sh` based on the requirements then run:
 chmod +x setup_cron.sh
 ./setup_cron.sh
 ```
+
+Powered by [terraform-ai](https://github.com/jigsaw373/terraform-ai).
