@@ -1,7 +1,7 @@
 resource "aws_security_group" "tdengine_sg" {
   name        = "tdengine-cluster-sg"
   description = "Allow traffic for TDengine cluster"
-  vpc_id      = data.aws_vpc.vpc.id
+  vpc_id      = aws_vpc.vpc.id
 
   # SSH access
   ingress {
