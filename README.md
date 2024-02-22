@@ -78,6 +78,11 @@ Run the backup playbook to configure the backup policy:
 ansible-playbook -i hosts.ini backup_tdengine.yaml
 ```
 
-## Backup Policy
+### Step 5: Implement Backup Schedular
 
-The `backup_tdengine.yaml` playbook configures a daily backup policy, storing backups in a specified S3 bucket. Ensure you have the S3 bucket details and necessary IAM permissions set up.
+Modify `setup_cron.sh` based on the requirements then run:
+
+```bash
+chmod +x setup_cron.sh
+./setup_cron.sh
+```
