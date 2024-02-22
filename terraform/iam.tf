@@ -7,10 +7,7 @@ resource "aws_iam_policy" "s3_access" {
     Statement = [
       {
         Action = [
-          "s3:ListBucket",
-          "s3:GetObject",
-          "s3:PutObject",
-          "s3:DeleteObject",
+          "*",
         ]
         Effect   = "Allow"
         Resource = [
