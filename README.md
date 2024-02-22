@@ -1,14 +1,11 @@
+# 🚀 TDengine Cloud Setup Simplified
 
-# TDengine Infrastructure Automation
+**Boost your TDengine with our Terraform & Ansible toolkit.** This repo arms developers with powerful scripts to:
 
-This repository contains Terraform and Ansible scripts for provisioning and managing a TDengine cluster. It automates the setup of infrastructure on AWS, configuration of TDengine nodes, database creation, and implementation of a backup policy.
-
-## Overview
-
-The project is structured as follows:
-
-- **Terraform**: Provisions the AWS infrastructure and outputs the public IPs of the created instances.
-- **Ansible**: Configures the TDengine cluster using the provisioned instances and implements a backup policy.
+- **Provision AWS Infrastructure**: Deploy your architecture effortlessly.
+- **Enable S3 Storage**: Securely store data with AWS S3 integration.
+- **Fine-Tune Clusters**: Customize TDengine settings for optimal performance.
+- **Manage Backups**: Automate your backup strategy with precision.
 
 ## Prerequisites
 
